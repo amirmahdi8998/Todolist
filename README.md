@@ -4,7 +4,6 @@ A clean, tiny, and fast to‑do list app. Add tasks, mark them done, edit, delet
 
 **Live Demo:** [Click Here!](https://todolist-8izs.onrender.com)
 
-> Replace the link above with your real demo URL (e.g., GitHub Pages, Netlify, Vercel).
 
 ---
 
