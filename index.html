@@ -1,31 +1,435 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <title>ToDoList</title>
+    <title>TaskFlow - Premium Todo List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 25%, #3730a3 50%, #4338ca 75%, #6366f1 100%);
+            animation: gradientShift 8s ease-in-out infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .task-item {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .task-item:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .completed {
+            animation: completeTask 0.6s ease-in-out;
+        }
+        
+        @keyframes completeTask {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .fade-out {
+            animation: fadeOut 0.4s ease-in forwards;
+        }
+        
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateX(30px) scale(0.9);
+            }
+        }
+        
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.8); }
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .progress-bar {
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .category-badge {
+            transition: all 0.3s ease;
+        }
+        
+        .category-badge:hover {
+            transform: scale(1.1);
+        }
+        
+        .input-focus {
+            transition: all 0.3s ease;
+        }
+        
+        .input-focus:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+        }
+    </style>
 </head>
+<body class="gradient-bg min-h-screen">
+    <!-- Floating Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-10 w-32 h-32 bg-white opacity-5 rounded-full floating" style="animation-delay: 0s;"></div>
+        <div class="absolute top-40 right-20 w-24 h-24 bg-white opacity-5 rounded-full floating" style="animation-delay: 1s;"></div>
+        <div class="absolute bottom-32 left-1/4 w-40 h-40 bg-white opacity-5 rounded-full floating" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-20 right-1/3 w-28 h-28 bg-white opacity-5 rounded-full floating" style="animation-delay: 1.5s;"></div>
+    </div>
 
-<body>
+    <div class="container mx-auto px-4 py-8 relative z-10">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-6xl font-bold text-white mb-4 floating">
+                ✨ TaskFlow
+            </h1>
+            <p class="text-xl text-blue-100 font-light">Your Premium Task Management Experience</p>
+        </header>
 
-    <div class="container">
-        <div class="nav">
-            <h2><i class="fas fa-clipboard-check"></i> To-Do List</h2>
-            <div class="userInputContainer">
-                <input type="text" id="userInput" placeholder="I need to..."><button onclick="addItem()">Submit</button>
+        <!-- Stats Dashboard -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="glass-effect rounded-2xl p-6 text-center task-item">
+                <div class="text-3xl font-bold text-white" id="totalTasks">0</div>
+                <div class="text-blue-200 font-medium">Total Tasks</div>
+            </div>
+            <div class="glass-effect rounded-2xl p-6 text-center task-item">
+                <div class="text-3xl font-bold text-green-300" id="completedTasks">0</div>
+                <div class="text-blue-200 font-medium">Completed</div>
+            </div>
+            <div class="glass-effect rounded-2xl p-6 text-center task-item">
+                <div class="text-3xl font-bold text-yellow-300" id="pendingTasks">0</div>
+                <div class="text-blue-200 font-medium">Pending</div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="glass-effect rounded-2xl p-6 mb-8">
+            <div class="flex justify-between items-center mb-3">
+                <span class="text-white font-semibold">Overall Progress</span>
+                <span class="text-blue-200" id="progressPercent">0%</span>
+            </div>
+            <div class="w-full bg-blue-900 bg-opacity-50 rounded-full h-3">
+                <div class="progress-bar bg-gradient-to-r from-green-400 to-blue-400 h-3 rounded-full" id="progressBar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Task Input Section -->
+            <div class="lg:col-span-1">
+                <div class="glass-effect rounded-2xl p-6 mb-6 pulse-glow">
+                    <h2 class="text-2xl font-bold text-white mb-6">Add New Task</h2>
+                    
+                    <form id="taskForm" class="space-y-4">
+                        <div>
+                            <input 
+                                type="text" 
+                                id="taskInput" 
+                                placeholder="What needs to be done?" 
+                                class="input-focus w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:border-blue-400"
+                                required
+                            >
+                        </div>
+                        
+                        <div>
+                            <select id="categorySelect" class="input-focus w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl text-white focus:outline-none focus:border-blue-400">
+                                <option value="work" class="bg-blue-900 text-white">🏢 Work</option>
+                                <option value="personal" class="bg-blue-900 text-white">👤 Personal</option>
+                                <option value="shopping" class="bg-blue-900 text-white">🛒 Shopping</option>
+                                <option value="health" class="bg-blue-900 text-white">💪 Health</option>
+                                <option value="learning" class="bg-blue-900 text-white">📚 Learning</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <select id="prioritySelect" class="input-focus w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl text-white focus:outline-none focus:border-blue-400">
+                                <option value="low" class="bg-blue-900 text-white">🟢 Low Priority</option>
+                                <option value="medium" class="bg-blue-900 text-white">🟡 Medium Priority</option>
+                                <option value="high" class="bg-blue-900 text-white">🔴 High Priority</option>
+                            </select>
+                        </div>
+                        
+                        <button 
+                            type="submit" 
+                            class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
+                        >
+                            ✨ Add Task
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="glass-effect rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">Filter by Category</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="filterTasks('all')" class="category-badge bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium">All</button>
+                        <button onclick="filterTasks('work')" class="category-badge bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 rounded-lg text-sm font-medium">Work</button>
+                        <button onclick="filterTasks('personal')" class="category-badge bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium">Personal</button>
+                        <button onclick="filterTasks('shopping')" class="category-badge bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm font-medium">Shopping</button>
+                        <button onclick="filterTasks('health')" class="category-badge bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-medium">Health</button>
+                        <button onclick="filterTasks('learning')" class="category-badge bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-lg text-sm font-medium">Learning</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks List Section -->
+            <div class="lg:col-span-2">
+                <div class="glass-effect rounded-2xl p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-white">Your Tasks</h2>
+                        <button 
+                            onclick="clearCompleted()" 
+                            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105"
+                        >
+                            Clear Completed
+                        </button>
+                    </div>
+                    
+                    <div id="tasksList" class="space-y-4">
+                        <!-- Tasks will be dynamically added here -->
+                    </div>
+                    
+                    <div id="emptyState" class="text-center py-12">
+                        <div class="text-6xl mb-4">📝</div>
+                        <h3 class="text-xl font-semibold text-white mb-2">No tasks yet</h3>
+                        <p class="text-blue-200">Add your first task to get started!</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="container">
-        <div class="toDoItems"></div>
-    </div>
-    <script src="script.js"></script>
-</body>
+    <script>
+        let tasks = [];
+        let taskIdCounter = 1;
+        let currentFilter = 'all';
 
+        // Category icons and colors
+        const categoryConfig = {
+            work: { icon: '🏢', color: 'bg-gray-500' },
+            personal: { icon: '👤', color: 'bg-green-500' },
+            shopping: { icon: '🛒', color: 'bg-yellow-500' },
+            health: { icon: '💪', color: 'bg-red-500' },
+            learning: { icon: '📚', color: 'bg-purple-500' }
+        };
+
+        // Priority colors
+        const priorityConfig = {
+            low: { color: 'border-green-400', icon: '🟢' },
+            medium: { color: 'border-yellow-400', icon: '🟡' },
+            high: { color: 'border-red-400', icon: '🔴' }
+        };
+
+        // Add task function
+        document.getElementById('taskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const taskText = document.getElementById('taskInput').value.trim();
+            const category = document.getElementById('categorySelect').value;
+            const priority = document.getElementById('prioritySelect').value;
+            
+            if (taskText) {
+                const task = {
+                    id: taskIdCounter++,
+                    text: taskText,
+                    category: category,
+                    priority: priority,
+                    completed: false,
+                    createdAt: new Date()
+                };
+                
+                tasks.push(task);
+                document.getElementById('taskInput').value = '';
+                renderTasks();
+                updateStats();
+            }
+        });
+
+        // Render tasks function
+        function renderTasks() {
+            const tasksList = document.getElementById('tasksList');
+            const emptyState = document.getElementById('emptyState');
+            
+            // Filter tasks based on current filter
+            const filteredTasks = currentFilter === 'all' 
+                ? tasks 
+                : tasks.filter(task => task.category === currentFilter);
+            
+            if (filteredTasks.length === 0) {
+                tasksList.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            tasksList.innerHTML = filteredTasks.map(task => {
+                const categoryInfo = categoryConfig[task.category];
+                const priorityInfo = priorityConfig[task.priority];
+                
+                return `
+                    <div class="task-item glass-effect rounded-xl p-4 border-l-4 ${priorityInfo.color} slide-in ${task.completed ? 'opacity-60' : ''}" data-task-id="${task.id}">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3 flex-1">
+                                <button 
+                                    onclick="toggleTask(${task.id})" 
+                                    class="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center transition-all duration-300 hover:scale-110 ${task.completed ? 'bg-green-500 border-green-500' : 'hover:border-green-400'}"
+                                >
+                                    ${task.completed ? '✓' : ''}
+                                </button>
+                                
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <span class="text-white font-medium ${task.completed ? 'line-through' : ''}">${task.text}</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-white ${categoryInfo.color}">
+                                            ${categoryInfo.icon} ${task.category}
+                                        </span>
+                                        <span class="text-xs text-blue-200">
+                                            ${priorityInfo.icon} ${task.priority} priority
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button 
+                                onclick="deleteTask(${task.id})" 
+                                class="ml-4 text-red-400 hover:text-red-300 transition-colors duration-300 hover:scale-110 transform"
+                            >
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Toggle task completion
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                
+                // Add completion animation
+                const taskElement = document.querySelector(`[data-task-id="${id}"]`);
+                if (task.completed) {
+                    taskElement.classList.add('completed');
+                    setTimeout(() => taskElement.classList.remove('completed'), 600);
+                }
+                
+                renderTasks();
+                updateStats();
+            }
+        }
+
+        // Delete task
+        function deleteTask(id) {
+            const taskElement = document.querySelector(`[data-task-id="${id}"]`);
+            taskElement.classList.add('fade-out');
+            
+            setTimeout(() => {
+                tasks = tasks.filter(t => t.id !== id);
+                renderTasks();
+                updateStats();
+            }, 400);
+        }
+
+        // Filter tasks
+        function filterTasks(category) {
+            currentFilter = category;
+            
+            // Update active filter button
+            document.querySelectorAll('.category-badge').forEach(btn => {
+                btn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                btn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+            });
+            
+            event.target.classList.remove('bg-gray-500', 'hover:bg-gray-600');
+            event.target.classList.add('bg-blue-500', 'hover:bg-blue-600');
+            
+            renderTasks();
+        }
+
+        // Clear completed tasks
+        function clearCompleted() {
+            const completedTasks = tasks.filter(t => t.completed);
+            
+            completedTasks.forEach(task => {
+                const taskElement = document.querySelector(`[data-task-id="${task.id}"]`);
+                if (taskElement) {
+                    taskElement.classList.add('fade-out');
+                }
+            });
+            
+            setTimeout(() => {
+                tasks = tasks.filter(t => !t.completed);
+                renderTasks();
+                updateStats();
+            }, 400);
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.completed).length;
+            const pending = total - completed;
+            const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+            
+            document.getElementById('totalTasks').textContent = total;
+            document.getElementById('completedTasks').textContent = completed;
+            document.getElementById('pendingTasks').textContent = pending;
+            document.getElementById('progressPercent').textContent = percentage + '%';
+            document.getElementById('progressBar').style.width = percentage + '%';
+        }
+
+        // Initialize the app
+        updateStats();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'976e2eae6226d10c',t:'MTc1NjQ5Mjg4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
