@@ -6,7 +6,7 @@
 
 body {
   font-family: cursive;
-  background: #080820;
+  background: hsl(260, 34%, 48%);
 }
 
 .container {
@@ -21,7 +21,6 @@ body {
   width: 100%;
   margin: 25px 0;
 }
-
 .nav h2 {
   font-size: 2em;
   color: #fff;
@@ -31,7 +30,6 @@ body {
   width: 350px;
   text-align: center;
 }
-
 .userInputContainer input {
   width: 80%;
   outline: none;
@@ -41,7 +39,6 @@ body {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
 }
-
 .userInputContainer button {
   cursor: pointer;
   padding: 8px;
@@ -53,7 +50,6 @@ body {
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
 }
-
 .userInputContainer button:hover {
   background-color: transparent !important;
   color: #fff;
@@ -75,15 +71,13 @@ body {
   margin-top: 10px;
   font-size: 1rem;
   text-transform: uppercase;
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
   background-color: #fff;
 }
-
 .item i {
   cursor: pointer;
   margin: 0 5px;
 }
-
 .item:hover {
   box-shadow: 0 0 20px #fff;
 }
@@ -103,15 +97,13 @@ body {
     width: 100%;
   }
 }
-
 @media (main-width: 480px) {
   .userInputContainer input {
     width: 74%;
   }
 }
-
 @media (main-width: 320px) {
   .userInputContainer input {
     width: 60%;
   }
-}
+}/*# sourceMappingURL=main.css.map */
