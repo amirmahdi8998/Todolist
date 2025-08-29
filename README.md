@@ -8,13 +8,6 @@ A clean, tiny, and fast to‑do list app. Add tasks, mark them done, edit, delet
 
 ---
 
-## 🔗 Quick Links
-
-* [English](#-english)
-* [فارسی](#-فارسی)
-
----
-
 ## 🇬🇧 English
 
 ### ✨ Features
@@ -25,33 +18,3 @@ A clean, tiny, and fast to‑do list app. Add tasks, mark them done, edit, delet
 * Keyboard‑friendly (Enter to add, Esc to cancel)
 * Minimal, responsive UI
 
-### 🧰 Tech Stack
-
-* **HTML5**, **CSS3**, **JavaScript (ES6+)**
-* No frameworks, no build tools — just open `index.html`
-
-
-
-
----
-
-## 🇮🇷 فارسی
-
-### ✨ ویژگی‌ها
-
-* افزودن، ویرایش، انجام و حذف تسک‌ها
-* ذخیره‌سازی خودکار با **LocalStorage**
-* فیلتر بر اساس **همه / فعال / انجام‌شده**
-* سازگار با کیبورد (Enter برای افزودن، Esc برای انصراف)
-* رابط کاربری مینیمال و واکنش‌گرا
-
-### 🧰 تکنولوژی‌ها
-
-* **HTML5**، **CSS3**، **JavaScript (ES6+)**
-* بدون فریم‌ورک و بیلد — کافیست `index.html` را باز کنید
-
-
-### 🧩 Notes
-
-* Replace `your-demo-link.example`, repo URL, name, and contacts with your real info.
-* If your app uses React/Vue/Svelte, add build steps under **Getting Started**.
